@@ -16,10 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//todo: создание новой задачи
-//todo: переименование задачи
-//todo: отметка задачи выполненной
-//todo: удаление задачи
+//todo: 2. создание новой задачи
+//todo: 3. переименование задачи
+//todo: 4. отметка задачи выполненной
+//todo: 5. удаление задачи
 
 @ExtendWith(MyWatchers.class)
 public class TestsRetrieveTaskList {
