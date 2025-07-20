@@ -88,7 +88,7 @@ public class MarkAsCompletedTest {
 
         assertAll("Несколько проверок",
                 () -> assertThat(task.getId()).isEqualTo(taskId),
-                () -> assertThat(task.getTitle()).isEqualTo("new task"),
+                () -> assertThat(task.getTitle()).isEqualTo("New task"),
                 () -> assertThat(task.getCompleted()).isEqualTo("true"));
     }
 

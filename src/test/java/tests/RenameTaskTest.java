@@ -91,7 +91,7 @@ public class RenameTaskTest {
 
         assertAll("Несколько проверок",
                 () -> assertThat(task.getId()).isEqualTo(taskId),
-                () -> assertThat(task.getTitle()).isEqualTo("renamed title"),
+                () -> assertThat(task.getTitle()).isEqualTo("Renamed Task"),
                 () -> assertThat(task.getCompleted()).isEqualTo("false"));
     }
 
