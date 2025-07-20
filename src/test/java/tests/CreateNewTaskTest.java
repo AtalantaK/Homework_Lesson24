@@ -82,5 +82,5 @@ public class CreateNewTaskTest {
 
     //todo: добавить удаление таски за собой (подчищение)
     //todo: добавить бизнес кейс
-    //todo: дбавить добавление таски с completed true
+    //todo: добавить добавление таски с completed true
 }
