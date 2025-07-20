@@ -2,8 +2,10 @@ package tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.HttpCodes;
+import helpers.ToDoHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -25,10 +27,23 @@ public class CreateNewTaskTest {
     private static final Path FILEPATH = Path.of("src/test/java/files/NewTask.json");
     private static final String endpoint = "https://todo-app-sky.herokuapp.com/";
     private HttpClient httpClient;
+    private ToDoHelper toDoHelper;
 
     @BeforeEach
-    public void createHttpClient() {
+    public void createHttpClient() throws IOException {
         httpClient = HttpClientBuilder.create().build();
+        toDoHelper = new ToDoHelper();
+
+        HttpGet request = new HttpGet(endpoint);
+        HttpResponse response = httpClient.execute(request);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String responseBody = EntityUtils.toString(response.getEntity());
+        Task[] tasks = objectMapper.readValue(responseBody, Task[].class);
+
+        for (Task task : tasks) {
+            toDoHelper.deleteTask(task.getId());
+        }
     }
 
     @Test
@@ -41,6 +56,13 @@ public class CreateNewTaskTest {
         HttpResponse response = httpClient.execute(request);
         int responseCode = response.getStatusLine().getStatusCode();
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        String responseBody = EntityUtils.toString(response.getEntity());
+        Task task = objectMapper.readValue(responseBody, Task.class);
+
+        //Убираем за собой
+        toDoHelper.deleteTask(task.getId());
+
         assertThat(responseCode).isEqualTo(HttpCodes.OK);
     }
 
@@ -52,13 +74,17 @@ public class CreateNewTaskTest {
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         request.setEntity(stringEntity);
         HttpResponse response = httpClient.execute(request);
+
         ObjectMapper objectMapper = new ObjectMapper();
         String responseBody = EntityUtils.toString(response.getEntity());
         Task task = objectMapper.readValue(responseBody, Task.class);
 
+        //Убираем за собой
+        toDoHelper.deleteTask(task.getId());
+
         assertAll("Несколько проверок",
                 () -> assertThat(task.getId()).isPositive(),
-                () -> assertThat(task.getTitle()).isEqualTo("new task"),
+                () -> assertThat(task.getTitle()).isEqualTo("New task"),
                 () -> assertThat(task.getCompleted()).isEqualTo("false"));
     }
 
@@ -73,10 +99,15 @@ public class CreateNewTaskTest {
         String expectedContentType = "application/json; charset=utf-8";
         String actualContentType = response.getFirstHeader("Content-Type").getValue();
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        String responseBody = EntityUtils.toString(response.getEntity());
+        Task task = objectMapper.readValue(responseBody, Task.class);
+
+        //Убираем за собой
+        toDoHelper.deleteTask(task.getId());
+
         assertThat(actualContentType).isEqualTo(expectedContentType);
     }
 
-    //todo: добавить удаление таски за собой (подчищение)
     //todo: добавить бизнес кейс
-    //todo: добавить добавление таски с completed true
 }

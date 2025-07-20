@@ -5,6 +5,7 @@ import helpers.HttpCodes;
 import helpers.ToDoHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -28,9 +29,20 @@ public class MarkAsCompletedTest {
     private ToDoHelper toDoHelper;
 
     @BeforeEach
-    public void createHttpClient() {
+    public void createHttpClient() throws IOException {
         httpClient = HttpClientBuilder.create().build();
         toDoHelper = new ToDoHelper();
+
+        HttpGet request = new HttpGet(endpoint);
+        HttpResponse response = httpClient.execute(request);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String responseBody = EntityUtils.toString(response.getEntity());
+        Task[] tasks = objectMapper.readValue(responseBody, Task[].class);
+
+        for (Task task : tasks) {
+            toDoHelper.deleteTask(task.getId());
+        }
     }
 
     @Test
