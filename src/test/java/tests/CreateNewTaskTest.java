@@ -9,7 +9,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,13 +20,10 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-// 2. создание новой задачи
-
 public class CreateNewTaskTest {
-    private static final String FILEPATH = "NewTask.json";
 
+    private static final Path FILEPATH = Path.of("NewTask.json");
     private static final String endpoint = "https://todo-app-sky.herokuapp.com/";
-
     private HttpClient httpClient;
 
     @BeforeEach
@@ -39,7 +35,7 @@ public class CreateNewTaskTest {
     @DisplayName("Проверка статус кода")
     public void checkStatusCode() throws IOException {
         HttpPost request = new HttpPost(endpoint);
-        String requestBody = Files.readString(Path.of(FILEPATH));
+        String requestBody = Files.readString(FILEPATH);
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         request.setEntity(stringEntity);
         HttpResponse response = httpClient.execute(request);
@@ -52,7 +48,7 @@ public class CreateNewTaskTest {
     @DisplayName("Проверка тела ответа")
     public void checkResponseBody() throws IOException {
         HttpPost request = new HttpPost(endpoint);
-        String requestBody = Files.readString(Path.of(FILEPATH));
+        String requestBody = Files.readString(FILEPATH);
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         request.setEntity(stringEntity);
         HttpResponse response = httpClient.execute(request);
@@ -70,7 +66,7 @@ public class CreateNewTaskTest {
     @DisplayName("Проверка Content-Type")
     public void checkContentType() throws IOException {
         HttpPost request = new HttpPost(endpoint);
-        String requestBody = Files.readString(Path.of(FILEPATH));
+        String requestBody = Files.readString(FILEPATH);
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         request.setEntity(stringEntity);
         HttpResponse response = httpClient.execute(request);

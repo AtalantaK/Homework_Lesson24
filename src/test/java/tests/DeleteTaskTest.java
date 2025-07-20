@@ -24,10 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class DeleteTaskTest {
-    private static final String FILEPATH = "NewTask.json";
 
     private static final String endpoint = "https://todo-app-sky.herokuapp.com/";
-
     private HttpClient httpClient;
     private ToDoHelper toDoHelper;
 
@@ -41,7 +39,10 @@ public class DeleteTaskTest {
     @DisplayName("Проверка статус кода")
     public void checkStatusCode() throws IOException {
 
+        //Создаем таску
         int taskId = toDoHelper.createTask();
+
+        //Удаляем таску
         HttpDelete httpDeleteRequest = new HttpDelete(endpoint + taskId);
         HttpResponse httpDeleteResponse = httpClient.execute(httpDeleteRequest);
         int responseCode = httpDeleteResponse.getStatusLine().getStatusCode();
@@ -53,7 +54,10 @@ public class DeleteTaskTest {
     @DisplayName("Проверка тела ответа")
     public void checkResponseBodyListEmpty() throws IOException {
 
+        //Создаем таску
         int taskId = toDoHelper.createTask();
+
+        //Удаляем таску
         HttpDelete httpDeleteRequest = new HttpDelete(endpoint + taskId);
         HttpResponse httpDeleteResponse = httpClient.execute(httpDeleteRequest);
         String responseBody = EntityUtils.toString(httpDeleteResponse.getEntity());
@@ -65,7 +69,10 @@ public class DeleteTaskTest {
     @DisplayName("Проверка Content-Type")
     public void checkContentType() throws IOException {
 
+        //Создаем таску
         int taskId = toDoHelper.createTask();
+
+        //Удаляем таску
         HttpDelete httpDeleteRequest = new HttpDelete(endpoint + taskId);
         HttpResponse httpDeleteResponse = httpClient.execute(httpDeleteRequest);
         String expectedContentType = "application/json; charset=utf-8";

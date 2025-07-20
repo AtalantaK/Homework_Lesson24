@@ -3,6 +3,7 @@ package helpers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -36,5 +37,10 @@ public class ToDoHelper {
         String responseBody = EntityUtils.toString(httpPostResponse.getEntity());
         Task task = objectMapper.readValue(responseBody, Task.class);
         return task.getId();
+    }
+
+    public void deleteTask(int taskId) throws IOException {
+        HttpDelete httpDeleteRequest = new HttpDelete(endpoint + taskId);
+        HttpResponse httpDeleteResponse = httpClient.execute(httpDeleteRequest);
     }
 }

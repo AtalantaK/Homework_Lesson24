@@ -16,7 +16,6 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-//todo: 3. переименование задачи
 //todo: 4. отметка задачи выполненной
 
 // 1. Получение списка
@@ -25,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class GetTaskListTest {
     /* https://sky-todo-list.herokuapp.com */
     private final static String endpoint = "https://todo-app-sky.herokuapp.com/";
-
     private HttpClient httpClient;
 
     @BeforeEach
