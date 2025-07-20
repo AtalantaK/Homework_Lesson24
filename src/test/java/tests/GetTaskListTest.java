@@ -16,10 +16,6 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-//todo: 4. отметка задачи выполненной
-
-// 1. Получение списка
-
 @ExtendWith(MyWatchers.class)
 public class GetTaskListTest {
     /* https://sky-todo-list.herokuapp.com */

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class CreateNewTaskTest {
 
-    private static final Path FILEPATH = Path.of("NewTask.json");
+    private static final Path FILEPATH = Path.of("src/test/java/files/NewTask.json");
     private static final String endpoint = "https://todo-app-sky.herokuapp.com/";
     private HttpClient httpClient;
 

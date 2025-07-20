@@ -6,7 +6,6 @@ import helpers.ToDoHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -22,8 +21,8 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class RenameTaskTest {
-    private static final Path FILEPATH = Path.of("src/test/java/files/RenameTask.json");
+public class MarkAsCompletedTest {
+    private static final Path FILEPATH = Path.of("src/test/java/files/MarkAsCompleted.json");
     private static final String endpoint = "https://todo-app-sky.herokuapp.com/";
     private HttpClient httpClient;
     private ToDoHelper toDoHelper;
@@ -41,10 +40,9 @@ public class RenameTaskTest {
         //Создаем таску
         int taskId = toDoHelper.createTask();
 
-        //Переименовываем таску
+        //Комплитим таску
         HttpPatch httpPatchRequest = new HttpPatch(endpoint + taskId);
         String requestBody = Files.readString(FILEPATH);
-        requestBody = requestBody.replaceFirst("1000", "" + taskId);
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         httpPatchRequest.setEntity(stringEntity);
         HttpResponse response = httpClient.execute(httpPatchRequest);
@@ -63,10 +61,9 @@ public class RenameTaskTest {
         //Создаем таску
         int taskId = toDoHelper.createTask();
 
-        //Переименовываем таску
+        //Комплитим таску
         HttpPatch httpPatchRequest = new HttpPatch(endpoint + taskId);
         String requestBody = Files.readString(FILEPATH);
-        requestBody = requestBody.replaceFirst("1000", "" + taskId);
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         httpPatchRequest.setEntity(stringEntity);
         HttpResponse response = httpClient.execute(httpPatchRequest);
@@ -79,8 +76,8 @@ public class RenameTaskTest {
 
         assertAll("Несколько проверок",
                 () -> assertThat(task.getId()).isEqualTo(taskId),
-                () -> assertThat(task.getTitle()).isEqualTo("renamed title"),
-                () -> assertThat(task.getCompleted()).isEqualTo("false"));
+                () -> assertThat(task.getTitle()).isEqualTo("new task"),
+                () -> assertThat(task.getCompleted()).isEqualTo("true"));
     }
 
     @Test
@@ -90,10 +87,9 @@ public class RenameTaskTest {
         //Создаем таску
         int taskId = toDoHelper.createTask();
 
-        //Переименовываем таску
+        //Комплитим таску
         HttpPatch httpPatchRequest = new HttpPatch(endpoint + taskId);
         String requestBody = Files.readString(FILEPATH);
-        requestBody = requestBody.replaceFirst("1000", "" + taskId);
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         httpPatchRequest.setEntity(stringEntity);
         HttpResponse response = httpClient.execute(httpPatchRequest);
@@ -107,26 +103,31 @@ public class RenameTaskTest {
     }
 
     @Test
-    @DisplayName("Переименовать таску на пустой title")
-    public void renameTaskWithEmptyTitle() throws IOException {
+    @DisplayName("Убрать что задача выполнена")
+    public void markAsNotCompleted() throws IOException {
 
         //Создаем таску
         int taskId = toDoHelper.createTask();
 
-        //Переименовываем таску
+        //Комплитим таску
+        toDoHelper.completeTask(taskId);
+
+        //Убираем комплит таски
         HttpPatch httpPatchRequest = new HttpPatch(endpoint + taskId);
         String requestBody = Files.readString(FILEPATH);
-        requestBody = requestBody.replaceFirst("1000", "" + taskId);
-        requestBody = requestBody.replaceFirst("renamed title", "");
+        requestBody = requestBody.replaceFirst("true", "false");
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         httpPatchRequest.setEntity(stringEntity);
         HttpResponse httpResponse = httpClient.execute(httpPatchRequest);
-        int responseCode = httpResponse.getStatusLine().getStatusCode();
-        String response = EntityUtils.toString(httpPatchRequest.getEntity());
 
-        assertAll("Несколько проверок",
-                () -> assertThat(responseCode).isEqualTo(HttpCodes.OK),
-                () -> assertThat(response).isEqualTo("title cannot be empty"));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String responseBody = EntityUtils.toString(httpResponse.getEntity());
+        Task task = objectMapper.readValue(responseBody, Task.class);
+
+        //Удаляем таску за собой
+        toDoHelper.deleteTask(taskId);
+
+        assertThat(task.getCompleted()).isEqualTo("false");
     }
 }
 
