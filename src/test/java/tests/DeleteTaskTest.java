@@ -1,22 +1,22 @@
 package tests;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.HttpCodes;
+import helpers.MyWatchers;
 import helpers.ToDoHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@ExtendWith(MyWatchers.class)
 public class DeleteTaskTest {
 
     private static final String endpoint = "https://todo-app-sky.herokuapp.com/";
@@ -28,12 +28,7 @@ public class DeleteTaskTest {
         httpClient = HttpClientBuilder.create().build();
         toDoHelper = new ToDoHelper();
 
-        HttpGet request = new HttpGet(endpoint);
-        HttpResponse response = httpClient.execute(request);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String responseBody = EntityUtils.toString(response.getEntity());
-        Task[] tasks = objectMapper.readValue(responseBody, Task[].class);
+        Task[] tasks = toDoHelper.getTasks();
 
         for (Task task : tasks) {
             toDoHelper.deleteTask(task.getId());
@@ -41,6 +36,7 @@ public class DeleteTaskTest {
     }
 
     @Test
+    @Tag("ContractCase")
     @DisplayName("Проверка статус кода")
     public void checkStatusCode() throws IOException {
 
@@ -56,6 +52,7 @@ public class DeleteTaskTest {
     }
 
     @Test
+    @Tag("ContractCase")
     @DisplayName("Проверка тела ответа")
     public void checkResponseBodyListEmpty() throws IOException {
 
@@ -71,6 +68,7 @@ public class DeleteTaskTest {
     }
 
     @Test
+    @Tag("ContractCase")
     @DisplayName("Проверка Content-Type")
     public void checkContentType() throws IOException {
 
@@ -87,6 +85,7 @@ public class DeleteTaskTest {
     }
 
     @Test
+    @Tag("ContractCase")
     @DisplayName("Удаление таски с несуществующим taskId")
     public void deleteTaskWithNonExistentTaskId() throws IOException {
 
@@ -100,8 +99,30 @@ public class DeleteTaskTest {
                 () -> assertThat(responseCode).isEqualTo(HttpCodes.OK),
                 () -> assertThat(responseBody).isEqualTo("task by taskId not found"));
     }
+
+    @Test
+    @Tag("BusinessCase")
+    @DisplayName("Удаление таски. Business Case")
+    public void deleteTaskBusinessCase() throws IOException {
+
+        int taskId = toDoHelper.createTask();
+        toDoHelper.createTask();
+
+        HttpDelete httpDeleteRequest = new HttpDelete(endpoint + taskId);
+        httpClient.execute(httpDeleteRequest);
+
+        Task[] tasks = toDoHelper.getTasks();
+
+        assertThat(tasks).extracting(Task::getId).doesNotContain(taskId);
+    }
+
+    @AfterEach
+    public void deleteAllTasks() throws IOException {
+
+        Task[] tasks = toDoHelper.getTasks();
+
+        for (Task task : tasks) {
+            toDoHelper.deleteTask(task.getId());
+        }
+    }
 }
-
-//todo: добавить бизнес кейс
-
-//todo: добавить e2e: add task, edit task, complete task, delete task

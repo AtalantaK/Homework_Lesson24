@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -15,6 +16,7 @@ import tests.Task;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Random;
 
 public class ToDoHelper {
     private final static String endpoint = "https://todo-app-sky.herokuapp.com/";
@@ -31,6 +33,7 @@ public class ToDoHelper {
 
         HttpPost httpPostRequest = new HttpPost(endpoint);
         String requestBody = Files.readString(FILEPATH_CREATE);
+        requestBody = requestBody.replaceFirst("New task", "New task " + randomId());
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         httpPostRequest.setEntity(stringEntity);
         HttpResponse httpPostResponse = httpClient.execute(httpPostRequest);
@@ -38,6 +41,7 @@ public class ToDoHelper {
         ObjectMapper objectMapper = new ObjectMapper();
         String responseBody = EntityUtils.toString(httpPostResponse.getEntity());
         Task task = objectMapper.readValue(responseBody, Task.class);
+
         return task.getId();
     }
 
@@ -52,5 +56,21 @@ public class ToDoHelper {
         StringEntity stringEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
         httpPatchRequest.setEntity(stringEntity);
         HttpResponse response = httpClient.execute(httpPatchRequest);
+    }
+
+    public Task[] getTasks() throws IOException {
+        HttpGet request = new HttpGet(endpoint);
+        HttpResponse response = httpClient.execute(request);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String responseBody = EntityUtils.toString(response.getEntity());
+        Task[] tasks = objectMapper.readValue(responseBody, Task[].class);
+
+        return tasks;
+    }
+
+    public int randomId() {
+        Random random = new Random();
+        return random.nextInt(1000) + 1;
     }
 }
