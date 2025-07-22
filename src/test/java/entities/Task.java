@@ -1,4 +1,4 @@
-package tests;
+package entities;
 
 public class Task {
     private int id;
@@ -42,7 +42,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "tests.Task{" +
+        return "entities.Task{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", completed=" + completed +

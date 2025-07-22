@@ -1,6 +1,7 @@
 package tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import entities.Task;
 import helpers.HttpCodes;
 import helpers.MyWatchers;
 import helpers.ToDoHelper;

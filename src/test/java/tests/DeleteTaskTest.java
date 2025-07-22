@@ -1,5 +1,6 @@
 package tests;
 
+import entities.Task;
 import helpers.HttpCodes;
 import helpers.MyWatchers;
 import helpers.ToDoHelper;

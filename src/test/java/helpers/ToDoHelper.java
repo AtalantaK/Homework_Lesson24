@@ -11,7 +11,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import tests.Task;
+import entities.Task;
 
 import java.io.IOException;
 import java.nio.file.Files;
